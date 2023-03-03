@@ -5,8 +5,8 @@
 </div>
 <script>
     // Variáveis de configuração do jogo
-    const pacMan = {x: 50, y: 50, radius: 20, color: "yellow", speed: 5};
-    const ghost = {x: 250, y: 250, radius: 15, color: "red", speed: 1.5};
+    let pacMan = {x: 50, y: 50, radius: 20, color: "yellow", speed: 5};
+    let ghost = {x: 250, y: 250, radius: 15, color: "red", speed: 1.5};
     const blockSize = 40;
 
 
@@ -14,7 +14,7 @@
     const MAP_COLS = 15; // Número de colunas do mapa
     let moedasTotal = 0;
 
-    const map = []; // Array que armazena o mapa
+    let map = []; // Array que armazena o mapa
 
     // Preenche o mapa com valores aleatórios
     for (let i = 0; i < MAP_ROWS; i++) {
@@ -40,19 +40,19 @@
     let moedasColetadas = 0;
     let _perdeu = false;
     let _ganhou = false;
-    const canvas = document.getElementById("myCanvas");
-    const perdeu = document.getElementById("perdeu");
+    let canvas = document.getElementById("myCanvas");
+    let perdeu = document.getElementById("perdeu");
     perdeu.style.display = "none";
-    const ganhou = document.getElementById("ganhou");
+    let ganhou = document.getElementById("ganhou");
     ganhou.style.display = "none";
-    const ctx = canvas.getContext("2d");
+    let ctx = canvas.getContext("2d");
     ctx.canvas.width = map[0].length * blockSize;
     ctx.canvas.height = map.length * blockSize;
 
     // Função que desenha o mapa do jogo
     function drawMap() {
-        for (const i = 0; i < map.length; i++) {
-            for (const j = 0; j < map[i].length; j++) {
+        for (let i = 0; i < map.length; i++) {
+            for (let j = 0; j < map[i].length; j++) {
                 if (map[i][j] == "b") {
                     ctx.fillStyle = "blue";
                     ctx.fillRect(j * blockSize, i * blockSize, blockSize, blockSize);
