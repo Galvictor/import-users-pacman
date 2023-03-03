@@ -5,9 +5,9 @@
 </div>
 <script>
     // Variáveis de configuração do jogo
-    var pacMan = {x: 50, y: 50, radius: 20, color: "yellow", speed: 5};
-    var ghost = {x: 250, y: 250, radius: 15, color: "red", speed: 1.5};
-    var blockSize = 40;
+    const pacMan = {x: 50, y: 50, radius: 20, color: "yellow", speed: 5};
+    const ghost = {x: 250, y: 250, radius: 15, color: "red", speed: 1.5};
+    const blockSize = 40;
 
 
     const MAP_ROWS = 15; // Número de linhas do mapa
@@ -40,19 +40,19 @@
     let moedasColetadas = 0;
     let _perdeu = false;
     let _ganhou = false;
-    var canvas = document.getElementById("myCanvas");
-    var perdeu = document.getElementById("perdeu");
+    const canvas = document.getElementById("myCanvas");
+    const perdeu = document.getElementById("perdeu");
     perdeu.style.display = "none";
-    var ganhou = document.getElementById("ganhou");
+    const ganhou = document.getElementById("ganhou");
     ganhou.style.display = "none";
-    var ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d");
     ctx.canvas.width = map[0].length * blockSize;
     ctx.canvas.height = map.length * blockSize;
 
     // Função que desenha o mapa do jogo
     function drawMap() {
-        for (var i = 0; i < map.length; i++) {
-            for (var j = 0; j < map[i].length; j++) {
+        for (const i = 0; i < map.length; i++) {
+            for (const j = 0; j < map[i].length; j++) {
                 if (map[i][j] == "b") {
                     ctx.fillStyle = "blue";
                     ctx.fillRect(j * blockSize, i * blockSize, blockSize, blockSize);
@@ -88,7 +88,7 @@
     // Função que verifica colisões
     function checkCollisions() {
         // Verifica colisão do Pac-Man com o fantasma
-        var distance = Math.sqrt(Math.pow(pacMan.x - ghost.x, 2) + Math.pow(pacMan.y - ghost.y, 2));
+        const distance = Math.sqrt(Math.pow(pacMan.x - ghost.x, 2) + Math.pow(pacMan.y - ghost.y, 2));
         if (distance < pacMan.radius + ghost.radius && _perdeu === false) {
             //alert("Você perdeu!");
             //console.log("Você perdeu!");
@@ -100,8 +100,8 @@
         }
 
         // Verifica colisão do Pac-Man com a moeda
-        var i = Math.floor(pacMan.y / blockSize);
-        var j = Math.floor(pacMan.x / blockSize);
+        const i = Math.floor(pacMan.y / blockSize);
+        const j = Math.floor(pacMan.x / blockSize);
         if (map[i][j] == "m") {
             map[i][j] = "b";
             //alert("Você coletou uma moeda!");
@@ -165,7 +165,7 @@
     }
 
     // Variável que armazena as teclas pressionadas
-    var keysDown = {};
+    const keysDown = {};
 
     // Registra os eventos
     // Registra o evento de pressionar uma tecla
