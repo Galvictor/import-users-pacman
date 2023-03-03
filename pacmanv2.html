@@ -1,0 +1,203 @@
+<h1 style="text-align:center" id="perdeu">Você perdeu!</h1>
+<h1 style="text-align:center" id="ganhou">Você Ganhou!</h1>
+<div style="display: flex;justify-content: center;">
+    <canvas id="myCanvas" width="520" height="520"></canvas>
+</div>
+<script>
+    // Variáveis de configuração do jogo
+    var pacMan = {x: 50, y: 50, radius: 20, color: "yellow", speed: 5};
+    var ghost = {x: 250, y: 250, radius: 15, color: "red", speed: 1.5};
+    var blockSize = 40;
+
+
+    const MAP_ROWS = 15; // Número de linhas do mapa
+    const MAP_COLS = 15; // Número de colunas do mapa
+    let moedasTotal = 0;
+
+    const map = []; // Array que armazena o mapa
+
+    // Preenche o mapa com valores aleatórios
+    for (let i = 0; i < MAP_ROWS; i++) {
+        const row = [];
+        for (let j = 0; j < MAP_COLS; j++) {
+            // Define uma parede em torno do mapa para evitar que o Pac-Man saia
+            if (i === 0 || i === MAP_ROWS - 1 || j === 0 || j === MAP_COLS - 1) {
+                row.push('b'); // Parede
+            } else {
+                // Gera um valor aleatório de 0 a 1
+                const value = Math.floor(Math.random() * 2);
+                if (value !== 1) {
+                    moedasTotal++;
+                }
+                row.push(value === 1 ? 'b' : 'm'); // Parede ou espaço vazio
+            }
+        }
+        map.push(row);
+    }
+
+    console.log(map);
+    // Obtém o contexto do canvas
+    let moedasColetadas = 0;
+    let _perdeu = false;
+    let _ganhou = false;
+    var canvas = document.getElementById("myCanvas");
+    var perdeu = document.getElementById("perdeu");
+    perdeu.style.display = "none";
+    var ganhou = document.getElementById("ganhou");
+    ganhou.style.display = "none";
+    var ctx = canvas.getContext("2d");
+    ctx.canvas.width = map[0].length * blockSize;
+    ctx.canvas.height = map.length * blockSize;
+
+    // Função que desenha o mapa do jogo
+    function drawMap() {
+        for (var i = 0; i < map.length; i++) {
+            for (var j = 0; j < map[i].length; j++) {
+                if (map[i][j] == "b") {
+                    ctx.fillStyle = "blue";
+                    ctx.fillRect(j * blockSize, i * blockSize, blockSize, blockSize);
+                } else if (map[i][j] == "m") {
+                    ctx.fillStyle = "white";
+                    ctx.beginPath();
+                    ctx.arc(j * blockSize + blockSize / 2, i * blockSize + blockSize / 2, blockSize / 4, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+        }
+    }
+
+    // Função que desenha os objetos do jogo
+    function drawObjects() {
+        // Desenha o Pac-Man
+        ctx.fillStyle = pacMan.color;
+        ctx.beginPath();
+        ctx.arc(pacMan.x, pacMan.y, pacMan.radius, 0.25 * Math.PI, 1.75 * Math.PI);
+        ctx.lineTo(pacMan.x, pacMan.y);
+        ctx.closePath();
+        ctx.fill();
+
+        // Desenha o fantasma
+        ctx.fillStyle = ghost.color;
+        ctx.beginPath();
+        ctx.arc(ghost.x, ghost.y, ghost.radius, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.fill();
+
+    }
+
+    // Função que verifica colisões
+    function checkCollisions() {
+        // Verifica colisão do Pac-Man com o fantasma
+        var distance = Math.sqrt(Math.pow(pacMan.x - ghost.x, 2) + Math.pow(pacMan.y - ghost.y, 2));
+        if (distance < pacMan.radius + ghost.radius && _perdeu === false) {
+            //alert("Você perdeu!");
+            //console.log("Você perdeu!");
+            perdeu.style.display = "block";
+            ghost.speed = 0;
+            pacMan.speed = 0;
+            _perdeu = true;
+
+        }
+
+        // Verifica colisão do Pac-Man com a moeda
+        var i = Math.floor(pacMan.y / blockSize);
+        var j = Math.floor(pacMan.x / blockSize);
+        if (map[i][j] == "m") {
+            map[i][j] = "b";
+            //alert("Você coletou uma moeda!");
+            //console.log("Você coletou uma moeda!");
+            moedasColetadas++;
+            console.log(moedasColetadas, moedasTotal);
+            if (moedasColetadas === moedasTotal) {
+                ganhou.style.display = "block";
+                ghost.speed = 0;
+                pacMan.speed = 0;
+                _ganhou = true;
+            }
+
+        }
+
+    }
+
+    // Função que atualiza a posição dos objetos do jogo
+    function updatePositions() {
+        // Move o Pac-Man
+        if (37 in keysDown) { // Tecla da esquerda
+            pacMan.x -= pacMan.speed;
+        }
+        if (38 in keysDown) { // Tecla de cima
+            pacMan.y -= pacMan.speed;
+        }
+        if (39 in keysDown) { // Tecla da direita
+            pacMan.x += pacMan.speed;
+        }
+        if (40 in keysDown) { // Tecla de baixo
+            pacMan.y += pacMan.speed;
+        }
+
+
+// pacMan Passa para o lado oposto
+        if (pacMan.x < 0) {
+            pacMan.x = canvas.width - 32;
+        }
+        if (pacMan.x > canvas.width - 32) {
+            pacMan.x = 0;
+        }
+        if (pacMan.y < 0) {
+
+            pacMan.y = canvas.height - 32;
+        }
+        if (pacMan.y > canvas.height - 32) {
+            pacMan.y = 0;
+        }
+
+        // Move o fantasma
+        if (ghost.x < pacMan.x) {
+            ghost.x += ghost.speed;
+        } else {
+            ghost.x -= ghost.speed;
+        }
+        if (ghost.y < pacMan.y) {
+            ghost.y += ghost.speed;
+        } else {
+            ghost.y -= ghost.speed;
+        }
+    }
+
+    // Variável que armazena as teclas pressionadas
+    var keysDown = {};
+
+    // Registra os eventos
+    // Registra o evento de pressionar uma tecla
+    addEventListener("keydown", function (e) {
+        keysDown[e.keyCode] = true;
+    }, false);
+
+    // Registra o evento de soltar uma tecla
+    addEventListener("keyup", function (e) {
+        delete keysDown[e.keyCode];
+    }, false);
+
+    // Função principal do jogo
+    function main() {
+        // Limpa o canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Desenha o mapa e os objetos do jogo
+        drawMap();
+        drawObjects();
+
+        // Verifica colisões
+        checkCollisions();
+
+        // Atualiza a posição dos objetos do jogo
+        updatePositions();
+
+        // Chama a função principal novamente após um intervalo de tempo
+        requestAnimationFrame(main);
+    }
+
+    // Inicia o jogo
+    main();
+
+</script>
